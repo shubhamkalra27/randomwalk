@@ -1,0 +1,176 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+ <link href="style.css" rel="stylesheet" type="text/css">
+ <script type="text/javascript">
+
+  window.onload = function () { 
+
+   var simValue = $("#simVal").val()
+   var animSpeed = $("#anim").val()
+   var simulation;
+   init(simValue)
+   $("#go").click(function () {
+    clearInterval(simulation)
+    simValue = $("#simVal").val();
+    animSpeed = $("#anim").val();
+    $("div.time-avg").html(" ");
+    $("div.origin").html(" ");
+    init(simValue);
+  });
+
+
+   function init(simValue) {
+    var xVal = 0;
+    var yVal = 0;
+    var updateInterval = animSpeed;
+    var dataLength = simValue;
+
+    var repeat = 0;
+    var indexLabelVal = null;
+    var dps = []; 
+    var chart = new CanvasJS.Chart("chartContainer", {
+     title: {
+      text: "2D Random Walk",
+      fontSize: 23
+    },
+    data: [{
+      type: "line",
+
+      dataPoints: dps
+    }]
+  });
+
+
+    var updateChart = function () {
+     if (Math.floor(Math.random() * 2) == 0) {
+      yVal = yVal + (Math.floor(Math.random() * 2) ? 1 : -1);
+      xVal = xVal
+    } else {
+      yVal = yVal
+      xVal = xVal + (Math.floor(Math.random() * 2) ? 1 : -1);
+    }
+    if (yVal == 0 && xVal == 0) {
+      repeat = repeat + 1;
+      $("div.origin").html("Return Frequency = <b>" + repeat + "</b>");
+      markerColorValue = "green";
+      markerSizeValue = 12;
+      indexLabelVal = "Origin";
+
+    } else {
+      markerColorValue = "orangered";
+      markerSizeValue = 12;
+      indexLabelVal = null;
+
+    }
+    if (dps.length == dataLength) {
+      markerColorValue = "red";
+      markerSizeValue = 12;
+      indexLabelVal = "end";
+    }
+
+
+    dps.push({
+      x: xVal,
+      y: yVal,
+      markerColor: markerColorValue,
+      markerSize: markerSizeValue,
+      indexLabel: indexLabelVal
+    });
+    $("div.demo-box")
+    .html("Time = <b>" + (dps.length - 1) + "</b>");
+
+
+    if (dps.length > dataLength) {
+      if (repeat > 0) {
+       $("div.time-avg")
+       .html("Average Steps taken to Return to Origin = <b>" + (dps.length - 1) / repeat + "</b>");
+     }
+
+     clearInterval(simulation)
+   }
+
+   chart.render();
+
+ };
+
+
+ updateChart();
+
+ simulation = setInterval(function () {
+
+   var totalDP = chart.options.data[0].dataPoints;
+   var lastDP = totalDP[totalDP.length - 1]
+   if (lastDP.markerColor == "orangered") {
+    lastDP.markerColor = "blue";
+    lastDP.markerSize = 4;
+  } else lastDP.markerColor == "green"
+
+  updateChart()
+
+
+}, updateInterval);
+// init ends
+} 
+// window.ready ends
+}
+</script>
+<script type="text/javascript" src="canvasjs.min.js"></script>
+<script type="text/javascript" src="jquery-1.9.1.js"></script>
+</head>
+<body>
+ <div class="left">
+  <div id="chartContainer" style="height: 400px; width: 440px;margin-top:30px;"></div>
+  <span>Steps: </span>
+
+  <input type="text" id="simVal" name="FirstName" value="1000" size='4'>
+  <span>Update Interval ms: </span>
+
+  <input type="text" id="anim" name="FirstName" value="50" size='4'>
+  <button id="go">GO</button> <span id="counter"></span>
+
+  <div class="demo-container">
+   <div class="demo-box"></div>
+   <div class="origin"></div>
+   <div class="time-avg"></div>
+ </div>
+</div>
+<div class="right">
+  <h4>Notes: </h4>
+  <ul>
+   <li>Alongside you see a 2 Dimension walker</li>
+   <li>Walker starts from origin to walk randomly in unit steps</li>
+   <li>We need to see if walker will come back to origin</li>
+ </ul>
+ <h4>Program</h4>
+ <ul>
+   <li>A random generator decides whether the person goes north-south or west-east.</li>
+   <li>A Second randomizer moves walker to forward or backward in the previously selected dimension.</li>
+   <li>The chart is re-rendered after the given amount of time, defaulted to 50 ms.</li>
+   <li><b>A walker may or maynot hit the origin. Increase the steps to see if it returns to origin</b></li>
+   <li>At the end of the program, we see the Average Steps taken to Return to Origin</li>
+ </ul>
+ <br/>
+
+ <h4>Assumptions</h4>
+
+ <ul>
+  <li>Each step takes 1 unit time</li>
+  <li>Walker takes one of the equally likely four paths available - North, South, East or West</li>
+  <li>Each change in direction is exactly at right angles</li>
+</ul>
+
+<h4>Conclusion</h4>
+<ul>
+  <li>If you let walker walk long enough it will come back to origin</li>
+</ul>
+<br/>
+<br/>
+<h4><a href="http://goo.gl/xED6vm" target="_blank"> Author: Shubham Kalra</a> </h4>
+
+
+</div>
+<a href="https://github.com/shubhamkalra27/randomwalk" target="_blank"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
+</body>
+</html>

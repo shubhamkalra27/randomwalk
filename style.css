@@ -1,0 +1,18 @@
+.description {
+    margin-top: 50px;
+    text-align:left;
+    font-family: calibri;
+    font-size: 16px;
+    color: gray;
+}
+a:link, a:visited, a:active {
+    color: #4F81BC;
+}
+.left {float: left;}
+.right{float: right;}
+
+
+h4 {
+margin: 5px 0 5px 0;
+color: darkgrey;
+}
